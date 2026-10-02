@@ -28,7 +28,13 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Build with Maven
-      run: docker run --rm -v "$PWD":/app -w /app maven:3.9-eclipse-temurin-26 mvn -B package
+      run: |
+        docker run --rm \
+          --user "$(id -u):$(id -g)" \
+          -v "$GITHUB_WORKSPACE":/app \
+          -w /app \
+          maven:3.9-eclipse-temurin-26 \
+          mvn -B package --file pom.xml
 
     # Optional: Uploads the full dependency graph to GitHub to improve the quality of Dependabot alerts this repository can receive
     - name: Update dependency graph

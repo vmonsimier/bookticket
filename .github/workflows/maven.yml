@@ -48,6 +48,11 @@ jobs:
         run: |
           docker build -t bookticket:latest .
 
+      - name: Deploy
+        run: |
+          cd ~/stack_bookticket
+          docker compose up -d
+
       - name: Cleanup PostgreSQL
         if: always()
         run: |

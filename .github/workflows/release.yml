@@ -16,3 +16,22 @@ jobs:
           VERSION="${GITHUB_REF_NAME#v}"
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           echo "Release version: $VERSION"
+      
+      - name: Start PostgreSQL
+        run: |
+          docker network create bookticket-ci || true
+
+          docker run -d \
+            --name bookticket-postgres \
+            --network bookticket-ci \
+            -e POSTGRES_DB=bookticket \
+            -e POSTGRES_USER=postgres \
+            -e POSTGRES_PASSWORD=postgres \
+            postgres:18
+            
+      - name: Wait for PostgreSQL
+        run: |
+          until docker exec bookticket-postgres pg_isready -U postgres -d bookticket; do
+            sleep 1
+          done
+      

@@ -1,0 +1,51 @@
+name: Java CI with Maven
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Start PostgreSQL
+        run: |
+          docker network create bookticket-ci || true
+
+          docker run -d \
+            --name bookticket-postgres \
+            --network bookticket-ci \
+            -e POSTGRES_DB=bookticket \
+            -e POSTGRES_USER=postgres \
+            -e POSTGRES_PASSWORD=postgres \
+            postgres:18
+
+      - name: Wait for PostgreSQL
+        run: |
+          until docker exec bookticket-postgres pg_isready -U postgres -d bookticket; do
+            sleep 1
+          done
+
+      - name: Build with Maven
+        run: |
+          docker run --rm \
+            --network bookticket-ci \
+            --user "$(id -u):$(id -g)" \
+            -v "$GITHUB_WORKSPACE":/app \
+            -w /app \
+            -e SPRING_DATASOURCE_URL=jdbc:postgresql://bookticket-postgres:5432/bookticket \
+            -e SPRING_DATASOURCE_USERNAME=postgres \
+            -e SPRING_DATASOURCE_PASSWORD=postgres \
+            maven:3.9-eclipse-temurin-26 \
+            mvn -B package --file pom.xml
+
+      - name: Cleanup PostgreSQL
+        if: always()
+        run: |
+          docker rm -f bookticket-postgres || true
+          docker network rm bookticket-ci || true

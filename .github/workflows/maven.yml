@@ -44,6 +44,10 @@ jobs:
             maven:3.9-eclipse-temurin-26 \
             mvn -B package --file pom.xml
 
+      - name: Build Docker image
+        run: |
+          docker build -t bookticket:latest .
+
       - name: Cleanup PostgreSQL
         if: always()
         run: |

@@ -54,4 +54,15 @@ jobs:
             -t "bookticket:$VERSION" \
             -t bookticket:latest \
             .
+
+      - name: Deploy
+        run: |
+          cd ~/stack_bookticket
+          BOOKTICKET_VERSION="$VERSION" docker compose up -d
+
+      - name: Cleanup PostgreSQL
+        if: always()
+        run: |
+          docker rm -f bookticket-postgres || true
+          docker network rm bookticket-ci || true
       

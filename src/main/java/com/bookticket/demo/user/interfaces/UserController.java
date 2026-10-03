@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.bookticket.demo.user.application.UserService;
 import com.bookticket.demo.user.domain.User;
 import com.bookticket.demo.user.interfaces.dto.CreateUserRequest;
+import com.bookticket.demo.user.interfaces.dto.LoginResponse;
+import com.bookticket.demo.user.interfaces.dto.LoginUserRequest;
 
 @RestController
 @RequestMapping("/users")
@@ -21,6 +23,12 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
+    @PostMapping("/auth/login")
+    public LoginResponse login(LoginUserRequest user) {
+        return userService.login(user);
+    }
+
     @GetMapping
     public List<User> findAll() {
         return userService.findAll();

@@ -27,6 +27,7 @@ public class SecurityConfig {
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 			.formLogin(Customizer.withDefaults())
 			.authorizeHttpRequests(authorize -> authorize
+					.requestMatchers("/users/auth/login").permitAll()
 					.requestMatchers(HttpMethod.POST, "/users").permitAll()
                     .anyRequest().authenticated()
 			);

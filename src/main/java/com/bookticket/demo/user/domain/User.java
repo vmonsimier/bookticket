@@ -16,10 +16,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private final String firstName;
-    private final String lastName;
-    private final String email;
-    private final String password;
+    private String firstName;
+    private  String lastName;
+    private  String email;
+    private  String password;
     @CreationTimestamp
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -31,8 +31,10 @@ public class User {
         this.password = password;
     }
 
-    public Long getId() {
+    protected User() {}
 
+
+    public Long getId() {
         return id;
     }
 

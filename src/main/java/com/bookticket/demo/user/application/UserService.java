@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.bookticket.demo.user.domain.User;
 import com.bookticket.demo.user.domain.UserRepository;
+import com.bookticket.demo.user.infrastructure.JwtService;
 import com.bookticket.demo.user.interfaces.dto.CreateUserRequest;
 import com.bookticket.demo.user.interfaces.dto.LoginResponse;
 import com.bookticket.demo.user.interfaces.dto.LoginUserRequest;
@@ -16,10 +17,12 @@ import com.bookticket.demo.user.interfaces.dto.LoginUserRequest;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public LoginResponse login(LoginUserRequest user) {
@@ -27,7 +30,8 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));;
 
         if(passwordEncoder.matches(user.password(), userFound.getPassword())) {
-            return new LoginResponse("token");
+            String jwtToken = jwtService.generateToken(userFound.getEmail());
+            return new LoginResponse(jwtToken);
         } else {
             throw new IllegalArgumentException("Invalid credentials");
         }

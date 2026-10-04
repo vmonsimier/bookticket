@@ -10,7 +10,7 @@ import com.bookticket.demo.reservation.domain.ReservationRepository;
 
 @Service
 public class ReservationService {
-    final private ReservationRepository reservationRepository;
+    private final ReservationRepository reservationRepository;
 
     public ReservationService(ReservationRepository reservationRepository) {
         this.reservationRepository = reservationRepository;

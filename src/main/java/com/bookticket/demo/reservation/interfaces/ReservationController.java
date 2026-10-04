@@ -18,7 +18,7 @@ import com.bookticket.demo.reservation.interfaces.dto.ReservationResponse;
 @RestController
 @RequestMapping("/reservations")
 public class ReservationController {
-    final private ReservationService reservationService;
+    private final ReservationService reservationService;
 
     public ReservationController(ReservationService reservationService) {
         this.reservationService = reservationService;

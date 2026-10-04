@@ -18,7 +18,7 @@ import com.bookticket.demo.user.interfaces.dto.LoginUserRequest;
 @RestController
 @RequestMapping("/users")
 public class UserController {
-    final private UserService userService;
+    private final UserService userService;
     
     public UserController(UserService userService) {
         this.userService = userService;

@@ -45,5 +45,9 @@ public class JwtService {
             return false;
         }
     }
+
+    public String extractSubject(String token) {
+        return io.jsonwebtoken.Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getSubject();
+    }
 }
 

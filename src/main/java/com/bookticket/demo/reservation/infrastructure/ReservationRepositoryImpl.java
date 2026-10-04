@@ -10,7 +10,7 @@ import com.bookticket.demo.reservation.domain.ReservationRepository;
 
 @Repository
 public class ReservationRepositoryImpl implements ReservationRepository {
-    final private JpaReservationRepository jpaReservationRepository;
+    private final JpaReservationRepository jpaReservationRepository;
 
     public ReservationRepositoryImpl(JpaReservationRepository jpaReservationRepository) {
         this.jpaReservationRepository = jpaReservationRepository;

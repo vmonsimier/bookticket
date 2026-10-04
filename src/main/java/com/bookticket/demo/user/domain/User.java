@@ -16,10 +16,10 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    final private String firstName;
-    final private String lastName;
-    final private String email;
-    final private String password;
+    private final String firstName;
+    private final String lastName;
+    private final String email;
+    private final String password;
     @CreationTimestamp
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

@@ -28,8 +28,7 @@ public class SecurityConfig {
 			.authorizeHttpRequests(authorize -> authorize
 					.requestMatchers("/users/auth/login").permitAll()
 					.requestMatchers(HttpMethod.POST, "/events").hasRole("ADMIN")
-					.requestMatchers(HttpMethod.DELETE, "/events").hasRole("ADMIN")
-					.requestMatchers(HttpMethod.DELETE, "/reservations").hasRole("ADMIN")
+					.requestMatchers(HttpMethod.DELETE, "/events/**").hasRole("ADMIN")
 					.requestMatchers(HttpMethod.POST, "/users").permitAll()
                     .anyRequest().authenticated()
 			);

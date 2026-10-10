@@ -46,9 +46,8 @@ public class UserService {
         return userRepository.save(userToSave);
     }
 
-    public void delete(CreateUserRequest user) {
-        User userToDelete = new User(user.firstName(), user.lastName(), user.email(), user.password());
-        userRepository.delete(userToDelete);
+    public void delete(User user) {
+        userRepository.delete(user);
     }
 
     public Optional<User> findById(Long id) {

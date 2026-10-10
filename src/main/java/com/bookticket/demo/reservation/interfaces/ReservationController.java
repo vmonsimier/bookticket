@@ -1,6 +1,7 @@
 package com.bookticket.demo.reservation.interfaces;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -41,9 +42,11 @@ public class ReservationController {
         reservationService.save(reservationToSave);
     }
 
-    @DeleteMapping
-    public void delete(@RequestBody CreateReservationRequest reservation) {
-        Reservation reservationToDelete = new Reservation(reservation.eventId(), reservation.userId(), reservation.nbTickets(), reservation.category());
-        reservationService.delete(reservationToDelete);
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        Optional<Reservation> reservation = this.reservationService.findById(id);
+        if (reservation.isPresent()) {
+            this.reservationService.delete(reservation.get());
+        }
     }
 }

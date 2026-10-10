@@ -5,6 +5,7 @@ import java.util.Optional;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,7 +37,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public Optional<User> findById(Long id) {
+    public Optional<User> findById(@PathVariable Long id) {
         return userService.findById(id);
     }
 
@@ -45,8 +46,11 @@ public class UserController {
         return userService.save(user);
     }
 
-    @DeleteMapping
-    public void delete(@RequestBody CreateUserRequest user) {
-        userService.delete(user);
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Long id) {
+        Optional<User> user = this.userService.findById(id);
+        if (user.isPresent()) {
+            this.userService.delete(user.get());
+        }
     }
 }

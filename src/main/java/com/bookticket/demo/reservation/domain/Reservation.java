@@ -13,9 +13,6 @@ import jakarta.persistence.Table;
 @Entity
 @Table(name = "reservation")
 public class Reservation {
-
-    public Reservation(Long eventId1, Long userId1, int nbTickets1, char category1) {
-    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -25,6 +22,16 @@ public class Reservation {
     private char category;
     @CreationTimestamp
     private LocalDateTime createdAt;
+    
+
+    public Reservation(Long eventId, Long userId, int nbTickets, char category) {
+        this.eventId = eventId;
+        this.userId = userId;
+        this.nbTickets = nbTickets;
+        this.category = category;
+    }
+
+    protected Reservation() {}
 
     public Long getId() {
         return id;

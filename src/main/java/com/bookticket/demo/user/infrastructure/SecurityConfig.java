@@ -27,9 +27,11 @@ public class SecurityConfig {
 			.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
 			.authorizeHttpRequests(authorize -> authorize
 					.requestMatchers("/users/auth/login").permitAll()
+					.requestMatchers(HttpMethod.POST, "/users").permitAll()
+					.requestMatchers(HttpMethod.GET, "/users").hasRole("ADMIN")
+					.requestMatchers(HttpMethod.GET, "/reservations").hasRole("ADMIN")
 					.requestMatchers(HttpMethod.POST, "/events").hasRole("ADMIN")
 					.requestMatchers(HttpMethod.DELETE, "/events/**").hasRole("ADMIN")
-					.requestMatchers(HttpMethod.POST, "/users").permitAll()
                     .anyRequest().authenticated()
 			);
 

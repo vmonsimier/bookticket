@@ -24,9 +24,8 @@ public class Reservation {
     private LocalDateTime createdAt;
     
 
-    public Reservation(Long eventId, Long userId, int nbTickets, char category) {
+    public Reservation(Long eventId, int nbTickets, char category) {
         this.eventId = eventId;
-        this.userId = userId;
         this.nbTickets = nbTickets;
         this.category = category;
     }
@@ -44,6 +43,10 @@ public class Reservation {
 
     public Long getUserId() {
         return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public int getNbTickets() {

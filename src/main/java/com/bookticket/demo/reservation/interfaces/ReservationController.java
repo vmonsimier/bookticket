@@ -38,7 +38,7 @@ public class ReservationController {
     }
     @PostMapping
     public void save(@RequestBody CreateReservationRequest reservation) {
-        Reservation reservationToSave = new Reservation(reservation.eventId(), reservation.userId(), reservation.nbTickets(), reservation.category());
+        Reservation reservationToSave = new Reservation(reservation.eventId(), reservation.nbTickets(), reservation.category());
         reservationService.save(reservationToSave);
     }
 

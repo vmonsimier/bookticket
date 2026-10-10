@@ -4,7 +4,10 @@ import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,6 +23,9 @@ public class User {
     private  String lastName;
     private  String email;
     private  String password;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role;
     @CreationTimestamp
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -29,7 +35,9 @@ public class User {
         this.lastName = lastName;
         this.email = email;
         this.password = password;
+        this.role = Role.USER;
     }
+
 
     protected User() {}
 
@@ -52,6 +60,10 @@ public class User {
 
     public String getPassword() {
         return password;
+    }
+
+    public Role getRole() {
+        return role;
     }
 
     public LocalDateTime getCreatedAt() {

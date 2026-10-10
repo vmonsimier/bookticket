@@ -30,7 +30,7 @@ public class UserService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         if(passwordEncoder.matches(user.password(), userFound.getPassword())) {
-            String jwtToken = jwtService.generateToken(userFound.getEmail());
+            String jwtToken = jwtService.generateToken(userFound.getEmail(), userFound.getRole());
             return new LoginResponse(jwtToken);
         } else {
             throw new IllegalArgumentException("Invalid credentials");

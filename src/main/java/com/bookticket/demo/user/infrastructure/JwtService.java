@@ -7,6 +7,8 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.bookticket.demo.user.domain.Role;
+
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -24,11 +26,12 @@ public class JwtService {
         secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
-    public String generateToken(String subject) {
+    public String generateToken(String subject, Role role) {
         Date expiration = new Date(System.currentTimeMillis() + 3600 * 1000);
         Date issuedAt = new Date();
         return io.jsonwebtoken.Jwts.builder()
                 .setSubject(subject)
+                .claim("role",role.name())
                 .expiration(expiration)
                 .issuedAt(issuedAt)
                 .signWith(secretKey)
@@ -46,6 +49,10 @@ public class JwtService {
 
     public String extractSubject(String token) {
         return io.jsonwebtoken.Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getSubject();
+    }
+
+    public String extractRole(String token) {
+        return io.jsonwebtoken.Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("role", String.class);
     }
 }
 

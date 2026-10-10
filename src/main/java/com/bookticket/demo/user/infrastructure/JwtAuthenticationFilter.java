@@ -1,8 +1,10 @@
 package com.bookticket.demo.user.infrastructure;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -32,7 +34,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 return;
             }
             String subject = jwtService.extractSubject(token);
-            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(subject, null, java.util.Collections.emptyList());
+            String role = jwtService.extractRole(token);
+            List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(subject, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
         filterChain.doFilter(request, response);

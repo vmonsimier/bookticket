@@ -27,8 +27,6 @@ public class JwtService {
     public String generateToken(String subject) {
         Date expiration = new Date(System.currentTimeMillis() + 3600 * 1000);
         Date issuedAt = new Date();
-        System.out.println("Actual date: " + issuedAt);
-        System.out.println(expiration);
         return io.jsonwebtoken.Jwts.builder()
                 .setSubject(subject)
                 .expiration(expiration)

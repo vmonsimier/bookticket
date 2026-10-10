@@ -27,7 +27,7 @@ public class UserService {
 
     public LoginResponse login(LoginUserRequest user) {
         User userFound = userRepository.findByEmail(user.email())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));;
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
         if(passwordEncoder.matches(user.password(), userFound.getPassword())) {
             String jwtToken = jwtService.generateToken(userFound.getEmail());

@@ -1,8 +1,13 @@
 package com.bookticket.demo.user.application;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -26,11 +31,14 @@ public class UserService {
     }
 
     public LoginResponse login(LoginUserRequest user) {
-        User userFound = userRepository.findByEmail(user.email())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        Optional<User> userOptional = this.findByEmail(user.email());
 
-        if(passwordEncoder.matches(user.password(), userFound.getPassword())) {
-            String jwtToken = tokenProvider.generateToken(userFound.getEmail(), userFound.getRole());
+        if(userOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Ressource not found");
+        }
+
+        if(passwordEncoder.matches(user.password(), userOptional.get().getPassword())) {
+            String jwtToken = tokenProvider.generateToken(userOptional.get().getEmail(), userOptional.get().getRole());
             return new LoginResponse(jwtToken);
         } else {
             throw new IllegalArgumentException("Invalid credentials");
@@ -47,10 +55,31 @@ public class UserService {
     }
 
     public void delete(User user) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().stream()
+            .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+        Optional<User> userOptional = this.findByEmail(authentication.getName());
+        if(userOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Ressource not found");
+        }
+        if(!isAdmin && !Objects.equals(userOptional.get().getId(), user.getId())) {
+            throw new AccessDeniedException("You are not allowed to delete this user");
+        }
         userRepository.delete(user);
     }
 
+
     public Optional<User> findById(Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+        Optional<User> userOptional = this.findByEmail(authentication.getName());
+        
+        if(userOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Ressource not found");
+        }
+        if(!isAdmin && !Objects.equals(userOptional.get().getId(), id)) {
+            throw new AccessDeniedException("You are not allowed to view this user");
+        }
         return userRepository.findById(id);
     }
 
@@ -59,6 +88,12 @@ public class UserService {
     }
 
     public List<User> findAll() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().stream()
+            .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+        if(!isAdmin) {
+            throw new AccessDeniedException("You are not allowed to view all users");
+        }
         return userRepository.findAll();
     }
 }

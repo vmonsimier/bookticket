@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.bookticket.demo.reservation.domain.Reservation;
@@ -26,8 +27,11 @@ public class ReservationService {
 
     public void save(Reservation reservation) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = userService.findByEmail(authentication.getName()).orElseThrow();
-        reservation.setUserId(user.getId());
+        Optional<User> userOptional = userService.findByEmail(authentication.getName());
+        if(userOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Ressource not found");
+        }
+        reservation.setUserId(userOptional.get().getId());
         reservationRepository.save(reservation);
     }
 
@@ -36,9 +40,12 @@ public class ReservationService {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         boolean isAdmin = authentication.getAuthorities().stream()
             .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+        Optional<User> userOptional = userService.findByEmail(authentication.getName());
+        if(userOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Ressource not found");
+        }
         if(!isAdmin) {
-            User user = userService.findByEmail(authentication.getName()).orElseThrow();
-            if(!Objects.equals(reservation.getUserId(), user.getId())) {
+            if(!Objects.equals(reservation.getUserId(), userOptional.get().getId())) {
                 throw new AccessDeniedException("You are not allowed to delete this reservation");
             }
         }
@@ -46,6 +53,12 @@ public class ReservationService {
     }
 
     public List<Reservation> findAll() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isAdmin = authentication.getAuthorities().stream()
+            .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
+        if(!isAdmin) {
+            throw new AccessDeniedException("You are not allowed to view all reservations");
+        }
         return reservationRepository.findAll();
     }
 
@@ -55,15 +68,18 @@ public class ReservationService {
             .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
         Optional<Reservation> reservationOptional = reservationRepository.findById(id);
         if(!reservationOptional.isEmpty()) {
-            return Optional.empty();
+            throw new UsernameNotFoundException("Ressource not found");
         }
 
-        if(!isAdmin) {
-            User user = userService.findByEmail(authentication.getName()).orElseThrow();
-            if(!Objects.equals(reservationOptional.get().getUserId(), user.getId())) {
-                throw new AccessDeniedException("You are not allowed to view this reservation");
-            }
+        Optional<User> userOptional = userService.findByEmail(authentication.getName());
+        if(userOptional.isEmpty()) {
+            throw new UsernameNotFoundException("Ressource not found");
         }
+
+        if(!isAdmin && !Objects.equals(reservationOptional.get().getUserId(), userOptional.get().getId())) {
+            throw new AccessDeniedException("You are not allowed to view this reservation");
+        }
+        
         return reservationOptional;
     }
 }

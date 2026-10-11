@@ -1,4 +1,4 @@
-package com.bookticket.demo.user.infrastructure;
+package com.bookticket.demo.shared.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -1,4 +1,4 @@
-package com.bookticket.demo.event.infrastructure;
+package com.bookticket.demo.event.infrastructure.persistence;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

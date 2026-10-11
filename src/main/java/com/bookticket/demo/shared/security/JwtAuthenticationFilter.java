@@ -1,4 +1,4 @@
-package com.bookticket.demo.user.infrastructure;
+package com.bookticket.demo.shared.security;
 
 import java.io.IOException;
 import java.util.List;
@@ -17,10 +17,10 @@ import jakarta.servlet.http.HttpServletResponse;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
-    private final JwtService jwtService;
+    private final JwtTokenProvider jwtTokenProvider;
 
-    public JwtAuthenticationFilter(JwtService jwtService) {
-        this.jwtService = jwtService;
+    public JwtAuthenticationFilter(JwtTokenProvider jwtTokenProvider) {
+        this.jwtTokenProvider = jwtTokenProvider;
     }
 
     @Override
@@ -28,13 +28,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String authHeader = request.getHeader("Authorization");
         if(authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
-            boolean isTokenValid = jwtService.validateToken(token);
+            boolean isTokenValid = jwtTokenProvider.validateToken(token);
             if(!isTokenValid) {
                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
                 return;
             }
-            String subject = jwtService.extractSubject(token);
-            String role = jwtService.extractRole(token);
+            String subject = jwtTokenProvider.extractSubject(token);
+            String role = jwtTokenProvider.extractRole(token);
             List<SimpleGrantedAuthority> authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(subject, null, authorities);
             SecurityContextHolder.getContext().setAuthentication(authentication);

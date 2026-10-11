@@ -1,4 +1,4 @@
-package com.bookticket.demo.reservation.infrastructure;
+package com.bookticket.demo.reservation.infrastructure.persistence;
 
 import java.util.List;
 import java.util.Optional;

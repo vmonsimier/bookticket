@@ -1,4 +1,4 @@
-package com.bookticket.demo.user.infrastructure;
+package com.bookticket.demo.shared.security;
 
 import java.util.Date;
 
@@ -7,6 +7,7 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.bookticket.demo.user.application.TokenProvider;
 import com.bookticket.demo.user.domain.Role;
 
 import io.jsonwebtoken.JwtException;
@@ -15,7 +16,7 @@ import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
 
 @Service
-public class JwtService {
+public class JwtTokenProvider implements TokenProvider {
 	private SecretKey secretKey;
 
     @Value("${jwt.secret}")
@@ -26,6 +27,7 @@ public class JwtService {
         secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
+    @Override
     public String generateToken(String subject, Role role) {
         Date expiration = new Date(System.currentTimeMillis() + 3600 * 1000);
         Date issuedAt = new Date();

@@ -1,4 +1,4 @@
-package com.bookticket.demo.user.application;
+package com.bookticket.demo.shared.security;
 
 import com.bookticket.demo.user.domain.Role;
 

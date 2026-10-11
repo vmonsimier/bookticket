@@ -7,7 +7,6 @@ import javax.crypto.SecretKey;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.bookticket.demo.user.application.TokenProvider;
 import com.bookticket.demo.user.domain.Role;
 
 import io.jsonwebtoken.JwtException;

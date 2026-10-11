@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import com.bookticket.demo.shared.security.TokenProvider;
 import com.bookticket.demo.user.domain.User;
 import com.bookticket.demo.user.domain.UserRepository;
 import com.bookticket.demo.user.interfaces.dto.CreateUserRequest;
